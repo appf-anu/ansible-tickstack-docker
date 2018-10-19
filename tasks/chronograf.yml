@@ -1,0 +1,29 @@
+- name: stop/rm chronograf docker container
+  docker_container:
+    state: absent
+    keep_volumes: yes
+    name: kapacitor
+
+- name: chronograf image pull
+  docker_image:
+    name: chronograf:alpine
+    state: present
+
+- name: chronograf container
+  docker_container:
+    name: chronograf
+    image: chronograf:alpine
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: influx
+    ports:
+      - "8888:8888"
+    volumes:
+      - "chronograf:/var/lib/chronograf"
+    env:
+      TZ: Australia/Canberra
+      INFLUXDB_URL: http://influxdb:8086
+      INFLUXDB_USERNAME: admin
+      INFLUXDB_PASSWORD: "{{ influxdb_admin_password|default(lookup('password', 'influxdb_admin_password chars=ascii_letters')) }}"
+      KAPACITOR_URL: http://kapacitor:8086

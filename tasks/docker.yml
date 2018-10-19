@@ -1,0 +1,35 @@
+- name: setup yum-config-manager
+  yum:
+    state: present
+    update_cache: yes
+    name: "{{item}}"
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: "Configuring docker-ce repo"
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: 0644
+
+- name: Install Docker
+  yum:
+    name: docker-ce
+
+- name: Install python-pip for docker-py
+  yum:
+    name: python-pip
+    state: present
+
+- name: Install docker-py
+  pip:
+    name: docker-py
+    state: present
+
+- name: Start docker
+  service:
+    name: docker
+    state: restarted
+    enabled: yes

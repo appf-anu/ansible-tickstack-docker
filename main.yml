@@ -1,0 +1,39 @@
+- hosts: tickstack
+  tasks:
+    - name: set hostname
+      hostname: name="{{inventory_hostname}}"
+      tags: setup
+
+    - name: set timezone to Australia/Canberra
+      timezone:
+        name: Australia/Canberra
+      tags: setup
+
+    - name: Setup docker
+      include_tasks: tasks/docker.yml
+      tags: docker, setup
+
+    - name: docker network
+      docker_network:
+        name: influx
+      tags: docker, setup
+
+    - name: Setup influxdb
+      include_tasks: tasks/influxdb.yml
+      tags: influxdb, setup
+
+    - name: Setup smtp
+      include_tasks: tasks/smtp.yml
+      tags: smtp
+
+    - name: Setup grafana
+      include_tasks: tasks/grafana.yml
+      tags: grafana
+
+    - name: Setup kapacitor
+      include_tasks: tasks/kapacitor.yml
+      tags: kapacitor
+    #
+    # - name: Setup chronograf
+    #   include_tasks: tasks/chronograf.yml
+    #   tags: chronograf

@@ -1,0 +1,5 @@
+[tickstack]
+#yourdomain ansible_host=<ip of your vm> grafana_admin_password="testingtesting" influxdb_admin_password="testingtesting"
+
+[tickstack:vars]
+ansible_user=root

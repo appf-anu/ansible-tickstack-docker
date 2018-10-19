@@ -1,0 +1,21 @@
+- name: stop/rm smtp docker container
+  docker_container:
+    state: absent
+    keep_volumes: yes
+    name: smtp
+
+- name: namshi/smtp image
+  docker_image:
+    name: namshi/smtp:latest
+    state: present
+
+- name: smtp container
+  docker_container:
+    name: smtp
+    image: namshi/smtp
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: influx
+    env:
+      MAILNAME: "{{grafana_domain|default(inventory_hostname)}}"

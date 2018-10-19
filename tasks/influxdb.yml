@@ -1,0 +1,27 @@
+- name: stop/rm docker container
+  docker_container:
+    state: absent
+    keep_volumes: yes
+    name: influxdb
+
+- name: influxdb image
+  docker_image:
+    name: influxdb:latest
+    state: present
+
+- name: influxdb container
+  docker_container:
+    name: influxdb
+    image: influxdb
+    state: started
+    restart_policy: unless-stopped
+    volumes:
+      - "/persist/influxdb:/var/lib/influxdb"
+    networks:
+      - name: influx
+    ports:
+      - "8086:8086"
+    env:
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: "{{ influxdb_admin_password|default(lookup('password', 'influxdb_admin_password chars=ascii_letters')) }}"
+      INFLUXDB_HTTP_AUTH_ENABLED: yes

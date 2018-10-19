@@ -1,0 +1,42 @@
+- name: stop/rm kapacitor docker container
+  docker_container:
+    state: absent
+    keep_volumes: yes
+    name: kapacitor
+
+- name: kapacitor image pull
+  docker_image:
+    name: kapacitor:alpine
+    state: present
+
+- name: kapacitor container
+  docker_container:
+    name: kapacitor
+    image: kapacitor:alpine
+    state: started
+    restart_policy: unless-stopped
+    networks:
+      - name: influx
+    ports:
+      - "9092:9092"
+    volumes:
+      - "/persist/kapacitor/load:/etc/kapacitor/load/:ro"
+    env:
+      KAPACITOR_INFLUXDB_0_URLS_0: "http://influxdb:8086"
+      KAPACITOR_INFLUXDB_USERNAME: "admin"
+      KAPACITOR_INFLUXDB_PASSWORD: "{{ influxdb_admin_password|default(lookup('password', 'influxdb_admin_password chars=ascii_letters')) }}"
+      KAPACITOR_HTTP_LOG_ENABLED: false
+      KAPACITOR_SMTP_ENABLED: true
+      KAPACITOR_SMTP_HOST: "smtp:25"
+      KAPACITOR_SMTP_NO_VERIFY: true
+      KAPACITOR_SMTP_FROM: "no-reply-kapacitor@{{grafana_domain|default(inventory_hostname)}}"
+      KAPACITOR_SLACK_ENABLED: "{{'true' if kapacitor_slack_url is defined else 'false'}}"
+      KAPACTIOR_SLACK_URL: "{{kapacitor_slack_url|default('  ')}}"
+      KAPACTIOR_SLACK_CHANNEL: "#alarms"
+      KAPACTIOR_SLACK_GLOBAL: false
+      KAPACITOR_LOAD_ENABLED: true
+      KAPACITOR_LOAD_DIR: /etc/kapacitor/load
+      TZ: Australia/Canberra
+
+# TODO:
+# add tickscripts to load from the thing!
