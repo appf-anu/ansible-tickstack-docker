@@ -23,8 +23,8 @@
       - "/persist/kapacitor/load:/etc/kapacitor/load/:ro"
     env:
       KAPACITOR_INFLUXDB_0_URLS_0: "http://influxdb:8086"
-      KAPACITOR_INFLUXDB_USERNAME: "admin"
-      KAPACITOR_INFLUXDB_PASSWORD: "{{ influxdb_admin_password|default(lookup('password', 'influxdb_admin_password chars=ascii_letters')) }}"
+      KAPACITOR_INFLUXDB_0_USERNAME: "admin"
+      KAPACITOR_INFLUXDB_0_PASSWORD: "{{ influxdb_admin_password|default(lookup('password', 'influxdb_admin_password chars=ascii_letters')) }}"
       KAPACITOR_HTTP_LOG_ENABLED: false
       KAPACITOR_SMTP_ENABLED: true
       KAPACITOR_SMTP_HOST: "smtp:25"

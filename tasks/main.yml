@@ -24,8 +24,8 @@
 - import_tasks: tasks/docker.yml
   tags: docker, setup
 #
-# - include_tasks: software_modules/influxdb.yml
-#   tags: docker, influxdb, influx, tick
+- include_tasks: software_modules/influxdb.yml
+  tags: docker, influxdb, influx, tick
 #
 - include_tasks: software_modules/smtp.yml
   tags: docker, tick, smtp

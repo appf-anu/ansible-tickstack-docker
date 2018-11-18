@@ -28,6 +28,17 @@
     name: docker-py
     state: present
 
+- name: setup docker logging so that it doesnt fill up root dir
+  copy:
+    content: |
+      {
+      "log-driver": "json-file",
+      "log-opts": {
+        "max-size": "10m",
+        "max-file": "10"
+      }
+    dest: /etc/docker/daemon.json
+
 - name: Start docker
   service:
     name: docker
